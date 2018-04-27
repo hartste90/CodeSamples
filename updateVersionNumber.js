@@ -124,38 +124,6 @@ function getOldVersionFromConfig ( configFilePath )
     return version;
 }
 
-function calculateNewVersionNumber ( currentVersionNumber, updateType )
-{
-
-    process.stdout.write( "Calculating new version number: " );
-    //split the version number into it's 3 parts
-    let versionAsArray = currentVersionNumber.split( '.' );
-    //update the correct part of the version number based on the update type
-    if ( updateType == "major" )
-    {
-        versionAsArray[ 0 ] = parseInt( versionAsArray[ 0 ] ) + 1;
-        versionAsArray[ 1 ] = 0;
-        versionAsArray[ 2 ] = 0;
-    }
-    else if ( updateType == "minor" )
-    {
-        versionAsArray[ 1 ] = parseInt( versionAsArray[ 1 ] ) + 1;
-        versionAsArray[ 2 ] = 0;
-    }
-    else if ( updateType == "patch" )
-    {
-        versionAsArray[ 2 ] = parseInt( versionAsArray[ 2 ] ) + 1;
-    }
-    else
-    {
-        return Error( 'Please specify an update type from ("major" or "minor")' );
-    }
-    //format the new version number
-    let newVersion = versionAsArray.join( '.' );
-    process.stdout.write( newVersion + "\n" );
-    return newVersion;
-}
-
 function writeJsonToFile ( path, jsonContent )
 {
     fs.writeFile( path, JSON.stringify( jsonContent, null, 4 ), function ( err )
