@@ -1,10 +1,17 @@
 /*
 Node tool to automate updating configuration files during the release process
-args: [gameFolderName] [update type (minor|major)]
-example: node updateVersionNumber.js minor
+args: [gameFolderName] [update type (major|minor|patch)]
+example: node updateVersionNumber.js MagicChance minor
 */
+//instructions
+if ( process.argv.length < 3 )
+{
+    process.stdout.write( "-- HELP - Use syntax: \n'node updateVersionNumber.js [gameFolderName] [updateType (major|minor|patch)]'\n" );
+    return;
+}
 //libraries
 let fs = require( 'fs' );
+var semver = require( "semver" );
 
 //args
 let gameFolderName = process.argv[ 2 ];
@@ -25,14 +32,23 @@ let configFilePath = configFolderPathHeader + configFileName;
 let packageFilePath = configFolderPathHeader + packageFileName;
 let remoteAssetsConfigFilePath = configFolderPathHeader + remoteAssetConfigFileName;
 
-let oldVersionNumber = getOldVersionFromPackage( packageFilePath );
-let newVersionNumber = calculateNewVersionNumber( oldVersionNumber, updateType );
+process.stdout.write( "Retrieving old version number: " );
+let oldVersionNumber = getOldVersionFromConfig( configFilePath );
+process.stdout.write( oldVersionNumber + "\n" );
+process.stdout.write( "Calculating new version number: " );
+let newVersionNumber = semver.inc( oldVersionNumber, updateType );
+if ( newVersionNumber == null )
+{
+    throw new Error( "Improper update type in args: " + updateType + ".  Please use 'major', 'minor', or 'patch'." )
+}
+process.stdout.write( newVersionNumber + "\n" );
 
 //update the config json
 process.stdout.write( "--Updating version number in " + configFileName + "\n" );
 createNewConfigJson( newVersionNumber, configFilePath );
 //update the asset config json
 process.stdout.write( "--Updating version number in " + remoteAssetConfigFileName + "\n" );
+createNewRemoteAssetsConfigJson( newVersionNumber, remoteAssetsConfigFilePath );
 //update the package json
 process.stdout.write( "--Updating version number in " + packageFileName + "\n" );
 createNewPackageJson( newVersionNumber, packageFilePath );
@@ -61,21 +77,50 @@ function createNewConfigJson ( newVersion, configFilePath )
     writeJsonToFile( configFilePath, configJson );
 }
 
-function getOldVersionFromPackage ( versionPackageFilePath )
+function getOldVersionFromConfig ( configFilePath )
 {
-    process.stdout.write( "Retrieving old version number: " );
-
-    //read in the json file
-    let versionPackageFile = fs.readFileSync( versionPackageFilePath );
-    let versionPackageJson = JSON.parse( versionPackageFile );
-    //get the old version number
-    let version = versionPackageJson.version;
-    if ( typeof version == undefined )
+    //get buffer from the config file
+    try
     {
-        process.stdout.write( "ERROR: version not found in " + versionPackageFilePath + "\n" );
+        var versionConfigFile = fs.readFileSync( configFilePath );
+    }
+    catch ( err )
+    {
+        if ( err.code === 'ENOENT' )
+        {
+            throw new Error( "Unable to read file " + configFilePath + ", please ensure the path is correct." );
+        }
+        else
+        {
+            console.log( err );
+        }
         return;
     }
-    process.stdout.write( version + "\n" );
+    //parse the json for version data
+    try
+    {
+        var versionConfigJson = JSON.parse( versionConfigFile );
+    }
+    catch ( err )
+    {
+        throw new Error( "Unable to parse json file: " + configFilePath + ", please ensure the path is correct and the json is uncorrupted" );
+        return;
+    }
+    //get the old version number
+    try
+    {
+        var version = versionConfigJson[ "games" ][ 0 ].version;
+    }
+    catch ( err )
+    {
+        throw new Error( "Unable to find version number in json at ['games'][0].version.  Please ensure json is correctly formatted in " + configFilePath );
+        return;
+    }
+    if ( semver.valid( version ) == null )
+    {
+        throw new Error( "Version improperly formatted in " + configFilePath + "\n" );
+        return;
+    }
     return version;
 }
 
@@ -88,11 +133,16 @@ function calculateNewVersionNumber ( currentVersionNumber, updateType )
     //update the correct part of the version number based on the update type
     if ( updateType == "major" )
     {
-        versionAsArray[ 1 ] = parseInt( versionAsArray[ 1 ] ) + 1;
-
+        versionAsArray[ 0 ] = parseInt( versionAsArray[ 0 ] ) + 1;
+        versionAsArray[ 1 ] = 0;
         versionAsArray[ 2 ] = 0;
     }
     else if ( updateType == "minor" )
+    {
+        versionAsArray[ 1 ] = parseInt( versionAsArray[ 1 ] ) + 1;
+        versionAsArray[ 2 ] = 0;
+    }
+    else if ( updateType == "patch" )
     {
         versionAsArray[ 2 ] = parseInt( versionAsArray[ 2 ] ) + 1;
     }
@@ -108,7 +158,7 @@ function calculateNewVersionNumber ( currentVersionNumber, updateType )
 
 function writeJsonToFile ( path, jsonContent )
 {
-    fs.writeFile( path, JSON.stringify( jsonContent ), function ( err )
+    fs.writeFile( path, JSON.stringify( jsonContent, null, 4 ), function ( err )
     {
         if ( err ) return console.log( err );
     } );
