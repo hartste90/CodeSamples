@@ -6,8 +6,7 @@ using Nakama;
 using System.Linq;
 
 
-namespace LionStudios
-{
+
     public interface IPersistentDataRemote : IPersistentData
     {
         WriteStorageObject GetWriteStorageObject();
@@ -258,4 +257,4 @@ namespace LionStudios
 
         WriteStorageObject _WriteStorageObject = new WriteStorageObject();
     }
-}
+
