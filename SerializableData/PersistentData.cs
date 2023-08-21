@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
 
-namespace LionStudios
-{
+
     public interface IPersistentData
     {
         void SaveLocal();
@@ -322,4 +321,4 @@ namespace LionStudios
         }
 #endif
     }
-}
+
