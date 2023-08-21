@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using FleuristeUtil;
 using static Fleuriste.Expansion;
 
-namespace Fleuriste
-{
     public partial class WorldData : SerializableContainer
     {
         public interface IPositionedObject : IPersistentDataRemote
@@ -705,4 +703,3 @@ namespace Fleuriste
             }
         }
     }
-}
