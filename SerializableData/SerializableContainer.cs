@@ -6,8 +6,7 @@ using UnityEditor;
 #endif
 
 
-namespace LionStudios
-{
+
     public abstract class SerializableContainer : ScriptableObject
     {
         public const string DefaultPlayerDataPath = "DefaultPlayerData";
@@ -116,4 +115,3 @@ namespace LionStudios
         }
 #endif
     }
-}
