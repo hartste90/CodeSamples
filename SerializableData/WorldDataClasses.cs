@@ -3,8 +3,6 @@ using UnityEngine;
 using LionStudios;
 using System;
 using System.Threading.Tasks;
-using FleuristeUtil;
-using static Fleuriste.Expansion;
 
     public partial class WorldData : SerializableContainer
     {
@@ -576,7 +574,7 @@ using static Fleuriste.Expansion;
                     return;
                 }
 
-                LastSaveAttempt = FleuristeUtils.GetTimeMillis();
+                LastSaveAttempt = GetTimeMillis();
 
                 if (NakamaController.Session != null)// && NakamaController.Session.Created)
                 {
@@ -585,7 +583,7 @@ using static Fleuriste.Expansion;
                 }
 
                 deviceId = NakamaController.GetDeviceId();
-                saveTime = FleuristeUtils.GetTimeMillis();
+                saveTime = GetTimeMillis();
 
                 //Debug.Log("Save Player: " + deviceId + " :: " + saveTime);
                 base.SaveLocal();
