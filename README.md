@@ -2,6 +2,10 @@
 
 A repository for storing public code samples and strong template and systems design work
 
+## Projects
+- [React / Clerk / MongoDB - Discord Chat & Video Service](dd.html)
+- [React - Talk Therapy Blog](https://github.com/hartste90/React-Talk-Therapy-Blog)
+
 ## Code
 - [Abstract Serializable Container](https://github.com/hartste90/CodeSamples/blob/master/Code/SerializableData/SerializableContainer.cs)
 - [Persistent Data - Client Unity](https://github.com/hartste90/CodeSamples/blob/master/Code/SerializableData/PersistentData.cs)
