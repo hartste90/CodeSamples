@@ -3,7 +3,7 @@
 A repository for storing public code samples and strong template and systems design work
 
 ## Projects
-- [React / Clerk / MongoDB - Discord Chat & Video Service](dd.html)
+- [React - Discord Chat & Video Service (using Clerk backend DB)](https://github.com/hartste90/discord-clone)
 - [React - Talk Therapy Blog](https://github.com/hartste90/React-Talk-Therapy-Blog)
 
 ## Code
